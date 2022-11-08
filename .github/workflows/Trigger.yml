@@ -12,6 +12,5 @@ jobs:
           "ssh repository url = ${{ github.repository.ssh_url }}"
           "repos_url = ${{github.repos_url}}"
           "repository.repos_url = ${{github.repository.repos_url}}"
-          "html url = ${{html_url}}"
           "repos_url = ${{github.repository.html_url}}"
           "github_url = ${{github.html_url}}"
