@@ -6,3 +6,6 @@ jobs:
     steps:
       - name: my-step
         run: echo "Hello World!"
+        run: echo " Git ref = ${{ github.ref }}"
+        run: echo "ssh url = ${{ github.ssh_url }}"
+        run: echo "ssh repository url = ${{ github.repository.ssh_url }}"
