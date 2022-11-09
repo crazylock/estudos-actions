@@ -14,3 +14,22 @@ jobs:
           "repository.repos_url = ${{github.repository.repos_url}}"
           "repos_url = ${{github.repository.html_url}}"
           "github_url = ${{github.html_url}}"
+
+      - name: GitHub Tag Name example
+        run: |
+          echo "Tag name from GITHUB_REF_NAME: $GITHUB_REF_NAME"
+          echo "Tag name from github.ref_name: ${{  github.ref_name }}"
+     
+      - name: Full URL's
+          echo "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          echo "https://github.com/${{github.repository}}/commit/${{github.sha}}/checks/${{github.run_id}}"
+     
+      - name: teste url ssh
+          env:
+            REPO: ${{ github.repository }}
+            TOKEN: ${{ github.token }}
+          with:
+            envs: REPO,TOKEN
+            script: |
+              git clone https://$TOKEN@github.com/$REPO.git
+
