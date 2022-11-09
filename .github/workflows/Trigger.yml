@@ -29,5 +29,5 @@ jobs:
         env:
           REPO: ${{ github.repository }}
           TOKEN: ${{ github.token }}
-        run: |
-            git clone https://${TOKEN}@github.com/${REPO}.git
+        run: 
+            echo "git clone https://${TOKEN}@github.com/${REPO}.git"
