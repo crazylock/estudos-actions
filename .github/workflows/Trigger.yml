@@ -25,11 +25,11 @@ jobs:
           echo "https://github.com/${{github.repository}}/commit/${{github.sha}}/checks/${{github.run_id}}"
      
       - name: teste url ssh
-          env:
-            REPO: ${{ github.repository }}
-            TOKEN: ${{ github.token }}
-          with:
-            envs: REPO,TOKEN
-            script: |
-              git clone https://$TOKEN@github.com/$REPO.git
+        env:
+          REPO: ${{ github.repository }}
+          TOKEN: ${{ github.token }}
+        with:
+          envs: REPO,TOKEN
+          script: |
+            git clone https://$TOKEN@github.com/$REPO.git
 
