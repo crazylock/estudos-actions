@@ -30,6 +30,4 @@ jobs:
           REPO: ${{ github.repository }}
           TOKEN: ${{ github.token }}
         run: |
-          envs: REPO,TOKEN
-          script: |
             git clone https://${TOKEN}@github.com/${REPO}.git
