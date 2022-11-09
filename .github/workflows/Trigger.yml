@@ -24,4 +24,13 @@ jobs:
         run: |
           echo "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
           echo "https://github.com/${{github.repository}}/commit/${{github.sha}}/checks/${{github.run_id}}"
+  
+      - name: teste url ssh
+        run: |
+        env:
+          REPO: ${{ github.repository }}
+          TOKEN: ${{ github.token }}
+          script: |
+            git clone https://$TOKEN@github.com/$REPO.git
+
      
