@@ -1,0 +1,50 @@
+name: Create AWS Role for New Repo
+
+on:
+  workflow_call:
+    inputs:
+      repoid:
+        required: true
+        type: string
+      repo_type:
+        required: true
+        type: string
+
+jobs:
+  create_role:
+    name: Create AWS Role via Terraform
+    runs-on: ubuntu-latest
+
+    permissions:
+      id-token: write
+      contents: read
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials (OIDC)
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::<account-id>:role/<your-oidc-admin-role>
+          aws-region: us-east-1
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.6.0
+
+      - name: Terraform Init
+        working-directory: terraform
+        run: terraform init
+
+      - name: Terraform Apply
+        working-directory: terraform
+        env:
+          REPO_ID: ${{ inputs.repoid }}
+          REPO_TYPE: ${{ inputs.repo_type }}
+        run: |
+          terraform apply -auto-approve \
+            -var="repo_id=$REPO_ID" \
+            -var="repo_type=$REPO_TYPE"
+

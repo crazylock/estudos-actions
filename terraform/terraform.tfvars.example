@@ -1,0 +1,3 @@
+repo_id   = "meu-repo-exemplo"
+repo_type = "infra" # ou "app"
+
