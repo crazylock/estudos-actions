@@ -151,3 +151,19 @@ Equipo Infra/DevOps — <contacto>
 
 Listo para exportar como archivo `.md` y subir a Git.
 
+_______
+
+
+📄 Documentación — Decisiones sobre el uso de Terraform
+
+🎯 Contexto
+
+Con la migración de GitLab y CloudFormation hacia GitHub y Terraform, estamos definiendo nuevas decisiones y directrices sobre el uso de Terraform, basándonos en los aprendizajes adquiridos en Brasil.
+
+Inicialmente pensamos en replicar el modelo brasileño: un repositorio por módulo, donde cada recurso o componente principal tendría su propio repositorio dedicado, incluyendo todos los subcomponentes necesarios.
+
+Este enfoque funciona bien en empresas grandes con equipos autónomos responsables de su propia infraestructura. En Uruguay, concluimos que el escenario es distinto.
+
+(El resto del documento sigue igual)
+
+
