@@ -1,0 +1,153 @@
+📄 Documentação — Decisões sobre o uso de Terraform
+
+🎯 Contexto
+
+Com a evolução das operações no Uruguai, iniciamos a definição da estratégia para gestão de infraestrutura como código (IaC) utilizando Terraform, considerando a realidade local e aprendizados do Brasil.
+
+Inicialmente, pensamos em replicar o modelo brasileiro: um repositório por módulo, onde cada recurso ou componente principal teria seu próprio repositório dedicado, incluindo todos os subcomponentes necessários.
+
+Essa abordagem funciona bem em empresas com equipes grandes e times com autonomia total sobre sua infraestrutura. No Uruguai, concluímos que o cenário é diferente.
+
+💬 Discussões e mudança de direção
+
+Após conversas com o time de Infraestrutura e o time de The Voice, percebemos que:
+
+O time local é pequeno (4 membros de Infra/DevOps).
+
+Não existem squads autônomos; toda a gestão de infraestrutura fica centralizada.
+
+
+Optamos então por usar um repositório único por conta de produto, centralizando todos os recursos e módulos necessários. Isso simplifica governança, manutenção e libera o time para melhorias.
+
+🗂️ Estrutura atual definida
+
+Repositório único por conta de produto.
+
+Organização interna em módulos.
+
+Exemplo: EC2, S3, Fargate, roles e VPCs no mesmo repositório.
+
+
+✅ Tabela de prós e contras — Módulos em repositórios separados vs. únicos
+
+Critério	Separados por módulo	Repositório único
+
+Autonomia por time	Alta	Baixa, gestão centralizada
+Escalabilidade organizacional	Alta	Limitada, mas suficiente
+Manutenção	Complexa	Simples
+Controle de deploy	Mais granular	Centralizado
+Velocidade de ajustes	Alta	Mais controlada
+Governança	Mais robusta	Mais simples
+
+
+✅ Tabela de prós e contras — Separados por recurso vs. único por conta
+
+Critério	Separados por recurso	Único por conta
+
+Isolamento	Total	Baixo
+Visão geral do ambiente	Fragmentada	Consolidada
+Governança de secrets	Complexa	Centralizada
+Complexidade CI/CD	Alta	Baixa
+Dependências	Complexas	Mais simples
+Escalabilidade futura	Boa	Pode precisar ajuste
+
+
+💡 Decisão final
+
+Repositório único por conta de produto.
+
+Organização interna em módulos.
+
+Pipelines e governança simplificados.
+
+Revisão periódica futura.
+
+
+🚀 Próximos passos
+
+Documentar estrutura de diretórios.
+
+Configurar pipelines (OIDC e workflows).
+
+Aprovações manuais para produção.
+
+Criar guias internos.
+
+
+✍️ Conclusão
+
+A estratégia atual é baseada no tamanho do time, simplicidade e visão consolidada. A documentação será viva e revisada conforme evolução.
+
+
+---
+
+🗒️ Template README.md sugerido
+
+# 🚀 Nome do Repositório
+
+## 📄 Descrição
+
+Repositório Terraform para a conta **<nome_da_conta>**. Inclui EC2, S3, Fargate, roles, VPCs e outros recursos.
+
+## 🏗️ Estrutura
+
+.
+├── main.tf
+├── variables.tf
+├── outputs.tf
+├── versions.tf
+├── modules/
+│   ├── ec2/
+│   ├── s3/
+│   ├── fargate/
+│   └── ...
+├── environments/
+│   ├── dev/
+│   ├── staging/
+│   └── prod/
+└── README.md
+
+## ⚙️ Deploy
+
+```bash
+terraform init
+tf fmt -recursive
+tf validate
+tf plan -var-file="environments/dev/dev.tfvars"
+tf apply -var-file="environments/dev/dev.tfvars"
+
+🔐 Segurança
+
+Autenticação OIDC via GitHub Actions.
+
+Permissões mínimas.
+
+
+👨‍💻 Contribuição
+
+1. Crie uma branch.
+
+
+2. Faça alterações.
+
+
+3. Abra Pull Request.
+
+
+4. Aguarde revisão.
+
+
+
+📝 Observações
+
+Mudanças em prod precisam de aprovação manual.
+
+Seguir guias internos.
+
+
+📞 Contato
+
+Time Infra/DevOps — <contato>
+
+Pronto para exportar em `.md` e subir no Git!
+
