@@ -1,0 +1,19 @@
+name: Trigger Java Build
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  call-reusable-java:
+    uses: org-name/reusable-repo/.github/workflows/java_reusable.yml@main
+    with:
+      repo_partner: 'https://github.com/org-name/partner-repo.git'
+      docker_image_base_build: 'eclipse-temurin:17-jdk'
+      docker_image_final: 'amazoncorretto:17'
+      dockerfile_path: './Dockerfile'
+      nexus_url: 'nexus.exemplo.com'
+      nexus_repo: 'releases'
+      nexus_username: ${{ secrets.NEXUS_USERNAME }}
+      nexus_password: ${{ secrets.NEXUS_PASSWORD }}

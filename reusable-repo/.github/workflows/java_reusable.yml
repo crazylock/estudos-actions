@@ -1,0 +1,84 @@
+name: Java Build and Push Reusable
+
+on:
+  workflow_call:
+    inputs:
+      repo_partner:
+        description: 'URL do repositório parceiro'
+        required: true
+        type: string
+      docker_image_base_build:
+        description: 'Imagem base para build'
+        required: true
+        type: string
+      docker_image_final:
+        description: 'Imagem final para copiar artefato'
+        required: true
+        type: string
+      dockerfile_path:
+        description: 'Caminho do Dockerfile'
+        required: true
+        type: string
+      nexus_url:
+        description: 'URL do Nexus'
+        required: true
+        type: string
+      nexus_repo:
+        description: 'Repositório do Nexus'
+        required: true
+        type: string
+      nexus_username:
+        description: 'Úsuário do Nexus'
+        required: true
+        type: string
+      nexus_password:
+        description: 'Senha ou token do Nexus'
+        required: true
+        type: string
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+
+    steps:
+      - name: Checkout código
+        uses: actions/checkout@v4
+
+      - name: Get Token (simulado)
+        id: get_token
+        run: |
+          echo "Simulando obtenção de token"
+          echo "token=meu-token-obtido" >> $GITHUB_OUTPUT
+
+      - name: Clone repo parceiro
+        run: |
+          git clone ${{ inputs.repo_partner }} partner-repo
+          echo "Repositório parceiro clonado"
+
+      - name: Build imagem base
+        run: |
+          docker build -t build-image --build-arg BASE_IMAGE=${{ inputs.docker_image_base_build }} -f ${{ inputs.dockerfile_path }} .
+
+      - name: Copiar artefato para imagem final
+        run: |
+          container_id=$(docker create build-image)
+          docker cp $container_id:/app/Main.class ./Main.class
+          docker rm $container_id
+          docker build -t final-image -<<EOF
+          FROM ${{ inputs.docker_image_final }}
+          COPY Main.class /app/Main.class
+          CMD ["java", "Main"]
+          EOF
+
+      - name: Login no Nexus
+        run: |
+          echo "${{ inputs.nexus_password }}" | docker login ${{ inputs.nexus_url }} -u ${{ inputs.nexus_username }} --password-stdin
+
+      - name: Push da imagem para Nexus
+        run: |
+          IMAGE_TAG=${{ inputs.nexus_url }}/${{ inputs.nexus_repo }}/meu-app:latest
+          docker tag final-image $IMAGE_TAG
+          docker push $IMAGE_TAG
