@@ -25,3 +25,9 @@ jobs:
       repo_type: "infra"
 ```
 
+
+## Exemplos de workflow para ECR
+
+Este repositório também inclui uma estrutura de exemplo de um workflow reutilizável para fazer login no Amazon ECR, realizar o build da imagem Docker com argumentos parametrizáveis e realizar o push para o repositório ECR. Veja em `reusable-ecr-action/`.
+
+Nas pastas `app-java/` e `app-python/` há projetos fictícios demonstrando como consumir esse workflow, cada um passando argumentos de build diferentes.
