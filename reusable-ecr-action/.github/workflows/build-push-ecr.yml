@@ -1,0 +1,64 @@
+name: Build and Push Docker to ECR
+
+on:
+  workflow_call:
+    inputs:
+      aws-region:
+        required: true
+        type: string
+      ecr-repository:
+        required: true
+        type: string
+      image-tag:
+        required: true
+        type: string
+      dockerfile:
+        required: false
+        default: Dockerfile
+        type: string
+      context:
+        required: false
+        default: .
+        type: string
+      build-args:
+        required: false
+        type: string
+        default: ''
+    secrets:
+      AWS_ROLE_TO_ASSUME:
+        required: true
+      AWS_ACCOUNT_ID:
+        required: true
+
+jobs:
+  build-push:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
+          aws-region: ${{ inputs.aws-region }}
+
+      - name: Login to Amazon ECR
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - id: repo
+        run: |
+          uri="${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ inputs.aws-region }}"
+          uri="$uri.amazonaws.com/${{ inputs.ecr-repository }}"
+          echo "uri=$uri" >> "$GITHUB_OUTPUT"
+
+      - name: Build and Push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: ${{ inputs.context }}
+          file: ${{ inputs.dockerfile }}
+          push: true
+          tags: ${{ steps.repo.outputs.uri }}:${{ inputs.image-tag }}
+          build-args: ${{ inputs['build-args'] }}

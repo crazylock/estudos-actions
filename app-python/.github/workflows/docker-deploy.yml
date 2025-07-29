@@ -1,0 +1,20 @@
+name: Deploy Python Image
+
+
+'on':
+  push:
+    branches: [main]
+
+jobs:
+  build_push:
+    uses: ../reusable-ecr-action/.github/workflows/build-push-ecr.yml
+    with:
+      aws-region: us-east-1
+      ecr-repository: python-example
+      image-tag: ${{ github.sha }}
+      build-args: |
+        APP_ENV=prod
+        EXTRA_INDEX=https://pypi.mycompany.com
+    secrets:
+      AWS_ROLE_TO_ASSUME: arn:aws:iam::444455556666:role/ExampleRole
+      AWS_ACCOUNT_ID: 444455556666
