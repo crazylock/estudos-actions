@@ -1,5 +1,8 @@
+---
 name: Build and Push Docker to ECR
 
+# yamllint disable rule:truthy
+# yamllint disable rule:line-length
 on:
   workflow_call:
     inputs:
@@ -49,23 +52,12 @@ jobs:
         uses: aws-actions/amazon-ecr-login@v2
 
       - name: Build and Push Docker image
+        uses: docker/build-push-action@v5
         env:
-          ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
-          REPOSITORY: ${{ inputs.ecr-repository }}
-          TAG: ${{ inputs.image-tag }}
-          DOCKERFILE: ${{ inputs.dockerfile }}
-          CONTEXT: ${{ inputs.context }}
-          BUILD_ARGS: ${{ inputs['build-args'] }}
-          REGION: ${{ inputs.aws-region }}
-        run: |
-          repo="$ACCOUNT_ID.dkr.ecr.$REGION.amazonaws.com/$REPOSITORY"
-          image="$repo:$TAG"
-          args=""
-          if [ -n "$BUILD_ARGS" ]; then
-            while IFS= read -r line; do
-              args="$args --build-arg $line"
-            done <<< "$BUILD_ARGS"
-          fi
-          echo "Building image $image"
-          docker build -f "$DOCKERFILE" $args -t "$image" "$CONTEXT"
-          docker push "$image"
+          ECR_REGISTRY: ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ inputs.aws-region }}.amazonaws.com
+        with:
+          context: ${{ inputs.context }}
+          file: ${{ inputs.dockerfile }}
+          push: true
+          tags: ${{ env.ECR_REGISTRY }}/${{ inputs.ecr-repository }}:${{ inputs.image-tag }}
+          build-args: ${{ inputs['build-args'] }}
