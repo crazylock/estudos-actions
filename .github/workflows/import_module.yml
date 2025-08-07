@@ -1,0 +1,53 @@
+name: Import Official Terraform Modules
+
+on:
+  workflow_dispatch:
+    inputs:
+      modules:
+        description: 'Comma-separated list of Terraform Registry modules (e.g., terraform-aws-modules/ec2-instance/aws,terraform-aws-modules/ecs/aws)'
+        required: true
+        type: string
+
+jobs:
+  import-modules:
+    name: Import Modules and Create Pull Request
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+      pull-requests: write
+      id-token: write  # For future use with OIDC, if needed
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install Python dependencies
+        run: |
+          python -m venv .venv
+          source .venv/bin/activate
+          pip install -r scripts/requirements.txt
+
+      - name: Run Terraform module importer
+        run: |
+          source .venv/bin/activate
+          python scripts/import_module.py "${{ github.event.inputs.modules }}"
+
+      - name: Create Pull Request with changes
+        uses: peter-evans/create-pull-request@v6
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: "feat(modules): update official Terraform modules"
+          branch: "import-terraform-modules-${{ github.run_id }}"
+          base: develop
+          title: "feat(modules): import/update Terraform modules"
+          body: |
+            This pull request was generated automatically via workflow_dispatch.
+
+            Updated modules:
+            - `${{ github.event.inputs.modules }}`

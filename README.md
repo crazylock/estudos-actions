@@ -1,27 +1,10 @@
-# Repositório: Criação de repositórios com AWS IAM Role
 
-## \uD83D\uDE80 Objetivo
+# Crie ambiente virtual
+python3 -m venv .venv && source .venv/bin/activate
 
-Criar uma role AWS com OIDC configurado para novos repositórios GitHub, usando Terraform.
+# Instale dependências
+pip install -r scripts/requirements.txt
 
-## \u2699\uFE0F Estrutura
-
-- `.github/workflows/create-aws-role.yml`: workflow reusable que chama Terraform.
-- `terraform/`: código Terraform modular.
-
-## \uD83D\uDD25 Tipos de repositório
-
-- `infra`: anexa policies de infraestrutura.
-- `app`: anexa policies para aplicações.
-
-## \uD83D\uDCBB Como chamar o workflow
-
-```yaml
-jobs:
-  create_aws_role:
-    uses: your-org/this-repo/.github/workflows/create-aws-role.yml@main
-    with:
-      repoid: "nome-do-repo"
-      repo_type: "infra"
-```
+# Rode o script (exemplo com 2 módulos)
+python scripts/import_module.py "terraform-aws-modules/ec2-instance/aws,terraform-aws-modules/ecs/aws"
 
